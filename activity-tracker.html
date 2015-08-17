@@ -1,0 +1,145 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="bower_components/paper-material/paper-material.html">
+<script src="bower_components/time-elements/time-elements.js"></script>
+
+<dom-module id="activity-tracker">
+
+    <style>
+        :host {
+          display: block;
+          box-sizing: border-box;
+        }
+        p, div, h2{
+            color: #212121;
+        }
+        p {
+            margin: 2px;
+        }
+
+        .time-and-creator{
+            opacity: 0.87;
+        }
+        .ellipsis {
+            text-overflow: ellipsis;
+
+            /* Required for text-overflow to do anything */
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .multiline-ellipsis {
+            margin: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2; /* number of lines to show */
+            line-height: 20px;        /* fallback */
+            max-height: 60px;       /* fallback */
+        }
+        .activity-object{
+            margin-bottom: 8px;
+            padding: 8px;
+            display: flex;
+        }
+        .activity-object:hover{
+            background-color: #FAFAFA;
+        }
+        .activity-object > img{
+            margin-right: 8px;
+            width: 50px;
+            height: 50px;
+        }
+        .activity-object > div{
+            overflow: auto;
+        }
+        .activity-title{
+            font-weight: bold;
+        }
+    </style>
+
+    <template>
+        <h2>{{title}}</h2>
+
+        <template is="dom-repeat" items="{{activities}}">
+            <paper-material elevation="1" class="activity-object" on-click="navigateToActivity">
+
+                <template is="dom-if" if="{{item.iconURL}}">
+                    <img src="{{item.iconURL}}">
+                </template>
+
+                <div>
+                    <p class="ellipsis activity-title">{{item.title}}</p>
+                    <p class="multiline-ellipsis" style="margin-bottom: 6px">{{item.description}}</p>
+                    <p class="time-and-creator">
+                        <!-- The time is set in the attach callback-->
+                        <time class="creationTime" is="relative-time"></time>
+                        <span> by </span>
+                        <span>{{item.user}}</span>
+                    </p>
+                </div>
+
+            </paper-material>
+        </template>
+    </template>
+
+</dom-module>
+
+<script>
+
+    Polymer({
+
+        is: 'activity-tracker',
+
+        properties: {
+            title: {
+                type: String,
+                value: 'Recent activity'
+            },
+            activities:{
+                type: Array
+            }
+        },
+
+
+        attached: function() {
+
+            // This is used to set the time for the time element
+            this.async(function() {
+                // access sibling or parent elements here
+                var times = Polymer.dom(this.root).querySelectorAll('.creationTime');
+
+                for(var i in times){
+                    times[i].setAttribute('datetime', this.activities[i].time);
+                }
+            });
+
+            // If a redirectURL is set then turn the cursor into a pointer to show that there is navigation
+            if(this.activities){
+                var times = Polymer.dom(this.root).querySelectorAll('.activity-object');
+                for(var i in times){
+                    if(this.activities[i].redirectURL){
+                        times[i].style.cursor = 'pointer';
+                    }
+                }
+            }
+        },
+
+
+        navigateToActivity: function(elem){
+            if(elem.model.__data__.item.redirectURL){
+                window.location = elem.model.__data__.item.redirectURL;
+            }
+        }
+
+    });
+
+</script>
