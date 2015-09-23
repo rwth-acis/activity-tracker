@@ -17,17 +17,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script src="../../web-component-tester/browser.js"></script>
 
     <!-- Step 1: import the element to test -->
-    <link rel="import" href="../seed-element.html">
+    <link rel="import" href="../activity-tracker.html">
   </head>
   <body>
 
     <!-- You can use the document as a place to set up your fixtures. -->
-    <seed-element></seed-element>
+    <activity-tracker></activity-tracker>
 
     <script>
-      var myEl = document.querySelector('seed-element');
+      var myEl = document.querySelector('activity-tracker');
 
-      suite('<seed-element>', function() {
+      suite('<activity-tracker>', function() {
 
         test('defines the "author" property', function() {
           assert.equal(myEl.author.name, 'Dimitri Glazkov');

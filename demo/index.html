@@ -10,39 +10,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <html>
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-        <title>Activity Tracker Demo</title>
-        <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-        <link rel="import" href="../activity-tracker.html">
-        <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>activity-tracker Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../activity-tracker.html">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
-        <style>
-            body {
-                background-color: #f9f9f9;
-                font-family: 'Roboto', sans-serif;
-            }
-            body > div{
-                max-width: 800px;
-                background-color: white;
-                margin: auto;
-                padding: 16px;
-                border: solid 1px #E0E0E0;
-            }
-        </style>
-    </head>
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: 'Roboto', sans-serif;
+        }
+        body > div{
+            max-width: 800px;
+            background-color: white;
+            margin: auto;
+            padding: 16px;
+            border: solid 1px #E0E0E0;
+        }
+    </style>
+</head>
 
-    <body>
-        <div>
-            <activity-tracker id="activity-tracker"></activity-tracker>
-        </div>
-    </body>
+<body unresolved>
+
+<p>An example of <code>&lt;activity-tracker&gt;</code>:</p>
+
+<activity-tracker id="activity-tracker"></activity-tracker>
+
+<script>
+    var activities = '[{"description": "Became the lead developer of requirement one", "time":"2015-08-09T16:30:00-08:00","iconURL":"http://animalia-life.com/data_images/cat/cat7.jpg","user":"Kristjan"},{"title": "Lord Meowser2", "description": "Created a new requirement", "time":"2015-08-06T16:30:00-08:00","iconURL":"http://animalia-life.com/data_images/cat/cat7.jpg","user":"Peter"},{"title": "Lord Meowser3 - asdn sdf dsfsd fdsf dsf dsfsd fdsf sdf dsf dsf sdf sdfaqwr q","description": "Became the lead developer of requirement one df sdf sdf sdf dsf sd fdsf dsf ds sdf dsf sdf sdfsd fsdf f sdf sdfs d fsff ew fwef gdf g", "time":"2015-08-09T16:30:00-08:00","iconURL":"http://animalia-life.com/data_images/cat/cat7.jpg","user":"Kristjan"},{"title": "Lord Meowser4", "description": "Created a new requirement", "time":"2015-08-06T16:30:00-08:00","user":"Bujar","redirectURL":"http://localhost:8080/components/seed-element/"}]';
+
+    document.getElementById('activity-tracker').setAttribute('activities', activities);
+</script>
+
+</body>
 
 
-    <script>
-        var activities = '[{"description": "Became the lead developer of requirement one", "time":"2015-08-09T16:30:00-08:00","iconURL":"http://animalia-life.com/data_images/cat/cat7.jpg","user":"Kristjan"},{"title": "Lord Meowser2", "description": "Created a new requirement", "time":"2015-08-06T16:30:00-08:00","iconURL":"http://animalia-life.com/data_images/cat/cat7.jpg","user":"Peter"},{"title": "Lord Meowser3 - asdn sdf dsfsd fdsf dsf dsfsd fdsf sdf dsf dsf sdf sdfaqwr q","description": "Became the lead developer of requirement one df sdf sdf sdf dsf sd fdsf dsf ds sdf dsf sdf sdfsd fsdf f sdf sdfs d fsff ew fwef gdf g", "time":"2015-08-09T16:30:00-08:00","iconURL":"http://animalia-life.com/data_images/cat/cat7.jpg","user":"Kristjan"},{"title": "Lord Meowser4", "description": "Created a new requirement", "time":"2015-08-06T16:30:00-08:00","user":"Bujar","redirectURL":"http://localhost:8080/components/seed-element/"}]';
-
-        document.getElementById('activity-tracker').setAttribute('activities', activities);
-    </script>
 </html>
