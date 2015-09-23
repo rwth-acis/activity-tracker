@@ -1,7 +1,9 @@
 # activity-tracker
-An activity tracker Web Component, built using Polymer. Takes a array of items and shows them in a list. By providing a icon Url a icon or profile image is shown on the left. By provding a redirect URL the elements becomes clickable and redirects the user on click.
+An activity tracker Web Component, built using Polymer. Takes an array of items and shows them in a list. By providing an icon Url an icon or profile image is shown on the left. By providing a redirect URL the elements becomes clickable and redirects the user on click.
 
-# Usage
+See the [component page](https://rwth-acis.github.io/activity-tracker) for more information.
+
+## Usage
 The element has 2 attributes
 
 title - A header displayed on top of the element, e.g. Recent Activities.
@@ -33,7 +35,7 @@ activities - A array of activities. The elements inside the array should have th
 }
 ```
 
-##example
+## Example
 ```html
 <activity-tracker title="Recent Activities" id="activity-tracker"></activity-tracker>
 
@@ -45,4 +47,14 @@ activities - A array of activities. The elements inside the array should have th
 
 ```
 
+## Development Environment
+
+This element is best tested during development using `polyserve`. To install, run
+```
+npm install -g polyserve
+```
+You may then use it to start a small development server using
+```
+polyserve
+```
 
