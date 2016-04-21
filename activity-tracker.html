@@ -10,6 +10,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+
 <script src="../time-elements/time-elements.js"></script>
 
 <!--
@@ -26,77 +28,81 @@ Example:
 -->
 <dom-module id="activity-tracker">
 
-    <style>
-        :host {
-          display: block;
-          box-sizing: border-box;
-        }
-        p, div, h2{
-            color: #212121;
-        }
-        p {
-            margin: 2px;
-        }
-
-        .time-and-creator{
-            opacity: 0.87;
-        }
-        .ellipsis {
-            text-overflow: ellipsis;
-
-            /* Required for text-overflow to do anything */
-            white-space: nowrap;
-            overflow: hidden;
-        }
-        .multiline-ellipsis {
-            margin: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2; /* number of lines to show */
-            line-height: 20px;        /* fallback */
-            max-height: 60px;       /* fallback */
-        }
-        .activity-object{
-            margin-bottom: 8px;
-            padding: 8px;
-            display: flex;
-        }
-        .activity-object:hover{
-            background-color: #FAFAFA;
-        }
-        .activity-object > img{
-            margin-right: 8px;
-            width: 50px;
-            height: 50px;
-        }
-        .activity-object > div{
-            overflow: auto;
-        }
-        .activity-title{
-            font-weight: bold;
-        }
-    </style>
-
     <template>
-        <h2>{{title}}</h2>
+        <style>
+            :host {
+                display: block;
+                box-sizing: border-box;
+            }
+            p, div, h2{
+                color: #212121;
+            }
+            p {
+                margin: 2px;
+            }
+
+            .time-and-creator{
+                opacity: 0.87;
+            }
+            .ellipsis {
+                text-overflow: ellipsis;
+
+                /* Required for text-overflow to do anything */
+                white-space: nowrap;
+                overflow: hidden;
+            }
+            .multiline-ellipsis {
+                margin: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2; /* number of lines to show */
+                line-height: 20px;        /* fallback */
+                max-height: 60px;       /* fallback */
+            }
+            .activity-object{
+                margin-bottom: 8px;
+                padding: 8px;
+                display: flex;
+            }
+            .activity-object:hover{
+                background-color: #FAFAFA;
+            }
+            .activity-object > img{
+                margin-right: 8px;
+                width: 50px;
+                height: 50px;
+            }
+            .activity-object > div{
+                overflow: auto;
+            }
+            .activity-title{
+                font-weight: bold;
+            }
+        </style>
+
+        <iron-ajax
+                id="activitiesLoader"
+                url="https://requirements-bazaar.org/betaactivities"
+                last-response="{{activities}}"
+                params='{"page":"0", "per_page":"150"}' auto></iron-ajax>
 
         <template is="dom-repeat" items="{{activities}}">
             <paper-material elevation="1" class="activity-object" on-click="navigateToActivity">
 
-                <template is="dom-if" if="{{item.iconURL}}">
-                    <img src="{{item.iconURL}}">
+                <template is="dom-if" if="{{item.user.profileImage}}">
+                    <img src="{{item.user.profileImage}}">
                 </template>
 
                 <div>
-                    <p class="ellipsis activity-title">{{item.title}}</p>
-                    <p class="multiline-ellipsis" style="margin-bottom: 6px">{{item.description}}</p>
+                    <p class="ellipsis activity-title">{{item.dataType}}</p>
+                    <p class="multiline-ellipsis" style="margin-bottom: 6px">{{item.activityAction}}</p>
                     <p class="time-and-creator">
                         <!-- The time is set in the attach callback-->
                         <time class="creationTime" is="relative-time"></time>
                         <span> by </span>
-                        <span>{{item.user}}</span>
+                        <span>{{item.user.userName}}</span>
                     </p>
                 </div>
 
