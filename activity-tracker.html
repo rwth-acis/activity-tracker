@@ -33,6 +33,7 @@ Example:
             :host {
                 display: block;
                 box-sizing: border-box;
+                font-size: medium;
             }
 
             .creator {
@@ -69,17 +70,21 @@ Example:
                 max-height: 60px;       /* fallback */
             }
             .activity-object{
-                margin-bottom: 8px;
-                padding: 8px;
+                padding: 2px;
+                padding-bottom: 8px;
                 display: flex;
+                border-bottom: 1px solid gainsboro;
+                cursor: pointer;
+                cursor: hand;
             }
             .activity-object:hover{
-                background-color: #FAFAFA;
+                background-color: lightgray;
             }
             .activity-object > img{
                 margin-right: 8px;
-                width: 50px;
-                height: 50px;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
             }
             .activity-object > div{
                 overflow: auto;
@@ -104,8 +109,7 @@ Example:
 
                 <div>
                     <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
-                    <span class="action">liked</span>
-                    <span class="object">{{item.dataType}} {{item.data.name}}</span>
+                    <span>[[calculateActivityMessage(item.activityAction, item.dataType, item.data)]]</span>
                     <div>
                         <time is="relative-time" class="creationTime" datetime$="[[item.creationTime]]"></time>
                     </div>
@@ -169,9 +173,52 @@ Example:
 
 
         navigateToActivity: function(elem){
-            if(elem.model.__data__.item.redirectURL){
-                window.location = elem.model.__data__.item.redirectURL;
+            if(elem.model.__data__.item.dataUrl){
+                window.location = elem.model.__data__.item.dataUrl;
             }
+        },
+
+        /**
+         * Calculates the text that is shown in the activity list entry.
+         *
+         * @param action the action of the activity.
+         * @param type the type of the activity.
+         * @param data the data object returned from the server.
+         * @returns {string}
+         */
+        calculateActivityMessage: function(action, type, data) {
+            var message = '';
+            var actionString = '';
+            var typeString = '';
+            var dataString = '';
+
+            switch (action) {
+                case 'CREATE':
+                    actionString = 'created';
+                    break;
+                case 'UPDATE':
+                    actionString = 'updated';
+                    break;
+                case 'DELETE':
+                    actionString = 'deleted';
+                    break;
+            }
+
+            switch (type) {
+                case 'PROJECT':
+                    typeString = 'the project';
+                    dataString = data.name;
+                    break;
+                case 'REQUIREMENT':
+                    typeString = 'the requirement';
+                    dataString = data.title;
+                    break;
+                case 'COMMENT':
+                    typeString = 'a comment';
+                    break;
+            }
+
+            return actionString + ' ' + typeString + ' ' + dataString + '.';
         }
 
     });
