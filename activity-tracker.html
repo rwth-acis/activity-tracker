@@ -34,6 +34,12 @@ Example:
                 display: block;
                 box-sizing: border-box;
             }
+
+            .creator {
+                font-weight: bold;
+            }
+
+
             p, div, h2{
                 color: #212121;
             }
@@ -41,8 +47,9 @@ Example:
                 margin: 2px;
             }
 
-            .time-and-creator{
+            .creationTime{
                 opacity: 0.87;
+                font-size: small;
             }
             .ellipsis {
                 text-overflow: ellipsis;
@@ -89,21 +96,29 @@ Example:
                 params='{"page":"0", "per_page":"150"}' auto></iron-ajax>
 
         <template is="dom-repeat" items="{{activities}}">
-            <paper-material elevation="1" class="activity-object" on-click="navigateToActivity">
+            <paper-material elevation="0" class="activity-object" on-click="navigateToActivity">
 
                 <template is="dom-if" if="{{item.user.profileImage}}">
                     <img src="{{item.user.profileImage}}">
                 </template>
 
                 <div>
+                    <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
+                    <span class="action">liked</span>
+                    <span class="object">{{item.dataType}} {{item.data.name}}</span>
+                    <div>
+                        <time is="relative-time" class="creationTime" datetime$="[[item.creationTime]]"></time>
+                    </div>
+
+                    <!--
                     <p class="ellipsis activity-title">{{item.dataType}}</p>
                     <p class="multiline-ellipsis" style="margin-bottom: 6px">{{item.activityAction}}</p>
                     <p class="time-and-creator">
-                        <!-- The time is set in the attach callback-->
                         <time class="creationTime" is="relative-time"></time>
                         <span> by </span>
                         <span>{{item.user.userName}}</span>
-                    </p>
+                    </p>-->
+
                 </div>
 
             </paper-material>
@@ -136,8 +151,8 @@ Example:
                 // access sibling or parent elements here
                 var times = Polymer.dom(this.root).querySelectorAll('.creationTime');
 
-                for(var i in times){
-                    times[i].setAttribute('datetime', this.activities[i].time);
+                for (var i in times){
+                    times[i].setAttribute('datetime', this.activities[i].creationTime);
                 }
             });
 
