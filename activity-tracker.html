@@ -19,7 +19,7 @@ An element showing a list of activities, who created it and when.
 
 Example:
 
-    <activity-tracker></activity-tracker>
+    <activity-tracker url="https://requirements-bazaar.org/betaactivities"></activity-tracker>
 
 @group rwth-acis Elements
 @element activity-tracker
@@ -96,7 +96,7 @@ Example:
 
         <iron-ajax
                 id="activitiesLoader"
-                url="https://requirements-bazaar.org/betaactivities"
+                url="[[url]]"
                 last-response="{{activities}}"
                 params='{"page":"0", "per_page":"150"}' auto></iron-ajax>
 
@@ -138,9 +138,9 @@ Example:
         is: 'activity-tracker',
 
         properties: {
-            title: {
+            url: {
                 type: String,
-                value: 'Recent activity'
+                value: 'https://requirements-bazaar.org/betaactivities'
             },
             activities:{
                 type: Array
