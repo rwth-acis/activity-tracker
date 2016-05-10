@@ -109,7 +109,7 @@ Example:
 
                 <div>
                     <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
-                    <span>[[calculateActivityMessage(item.activityAction, item.dataType, item.data)]]</span>
+                    <span>[[calculateActivityMessage(item.activityAction, item.dataType, item.data)]] [[item.dataUrl]]</span>
                     <div>
                         <time is="relative-time" class="creationTime" datetime$="[[item.creationTime]]"></time>
                     </div>
@@ -172,9 +172,22 @@ Example:
         },
 
 
+        /**
+         * Calculates the redirect URL for showing an appropriate frontend for the type of activity.
+         *
+         */
         navigateToActivity: function(elem){
-            if(elem.model.__data__.item.dataUrl){
-                window.location = elem.model.__data__.item.dataUrl;
+            var redirectUrl = '';
+
+            // for a comment, it's the requirements ID
+            if (elem.model.__data__.item.dataType === 'PROJECT') {
+                redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.id;
+            } else if (elem.model.__data__.item.dataType === 'REQUIREMENT') {
+                redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.projectId + '/components/' + elem.model.__data__.item.data.components[0].id + '/requirements/' + elem.model.__data__.item.data.id;
+            }
+
+            if (redirectUrl !== ''){
+                window.location = redirectUrl;
             }
         },
 
