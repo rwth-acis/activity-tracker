@@ -109,7 +109,7 @@ Example:
 
                 <div>
                     <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
-                    <span>[[calculateActivityMessage(item.activityAction, item.dataType, item.data, item.parentData)]]</span>
+                    <span>[[calculateActivityMessage(item)]]</span>
                     <div>
                         <time is="relative-time" class="creationTime" datetime$="[[item.creationTime]]"></time>
                     </div>
@@ -202,7 +202,12 @@ Example:
          * @param data the data object returned from the server.
          * @returns {string}
          */
-        calculateActivityMessage: function(action, type, data, parentData) {
+        calculateActivityMessage: function(item) {
+            var action = item.activityAction;
+            var type = item.dataType;
+            var data = item.data;
+            var parentData = item.parentData;
+
             var message = '';
             var actionString = '';
             var typeString = '';
