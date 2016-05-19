@@ -109,7 +109,7 @@ Example:
 
                 <div>
                     <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
-                    <span>[[calculateActivityMessage(item.activityAction, item.dataType, item.data)]]</span>
+                    <span>[[calculateActivityMessage(item.activityAction, item.dataType, item.data, item.parentData)]]</span>
                     <div>
                         <time is="relative-time" class="creationTime" datetime$="[[item.creationTime]]"></time>
                     </div>
@@ -177,6 +177,8 @@ Example:
          *
          */
         navigateToActivity: function(elem){
+            window.location = elem.model.__data__.item.dataFrontendUrl;
+            /*
             var redirectUrl = '';
 
             // for a comment, it's the requirements ID
@@ -189,6 +191,7 @@ Example:
             if (redirectUrl !== ''){
                 window.location = redirectUrl;
             }
+            */
         },
 
         /**
@@ -199,7 +202,7 @@ Example:
          * @param data the data object returned from the server.
          * @returns {string}
          */
-        calculateActivityMessage: function(action, type, data) {
+        calculateActivityMessage: function(action, type, data, parentData) {
             var message = '';
             var actionString = '';
             var typeString = '';
@@ -220,14 +223,19 @@ Example:
             switch (type) {
                 case 'PROJECT':
                     typeString = 'the project';
-                    dataString = data.name;
+                    dataString = '"' + data.name + '"';
+                    break;
+                case 'COMPONENT':
+                    typeString = 'the component';
+                    dataString = '"' + data.name + '" in the project "' + parentData.name + '"';
                     break;
                 case 'REQUIREMENT':
                     typeString = 'the requirement';
-                    dataString = data.title;
+                    dataString = '"' + data.title + '"';
                     break;
                 case 'COMMENT':
-                    typeString = 'a comment';
+                    typeString = 'a comment for the requirement';
+                    dataString = '"' + parentData.title + '"';
                     break;
             }
 
@@ -238,7 +246,6 @@ Example:
          * Refreshes the activities from the server.
          */
         refresh: function() {
-            console.log('refreshing!');
             this.$.activitiesLoader.generateRequest();
         }
 
