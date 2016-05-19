@@ -33,7 +33,7 @@ Example:
             :host {
                 display: block;
                 box-sizing: border-box;
-                font-size: medium;
+                font-size: 14px;
             }
 
             .creator {
@@ -232,6 +232,14 @@ Example:
             }
 
             return actionString + ' ' + typeString + ' ' + dataString + '.';
+        },
+
+        /**
+         * Refreshes the activities from the server.
+         */
+        refresh: function() {
+            console.log('refreshing!');
+            this.$.activitiesLoader.generateRequest();
         }
 
     });

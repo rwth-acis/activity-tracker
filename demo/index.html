@@ -16,6 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <title>activity-tracker Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="../activity-tracker.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
     <style>
@@ -36,11 +37,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <body unresolved>
 
 <p>An example of <code>&lt;activity-tracker&gt;</code>:</p>
+<paper-button>Click to refresh</paper-button>
 
 <activity-tracker id="activity-tracker" url="https://requirements-bazaar.org/betaactivities"></activity-tracker>
 
 <script>
-
+document.querySelector('paper-button').addEventListener('click', function(e) {
+    document.querySelector('activity-tracker').refresh();
+});
 </script>
 
 </body>
