@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-material/paper-material.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-scroll-threshold/iron-scroll-threshold.html">
 
 <script src="../time-elements/time-elements.js"></script>
 
@@ -92,41 +93,62 @@ Example:
             .activity-title{
                 font-weight: bold;
             }
+            .loader {
+                background-color: #0b8043;
+                text-align: center;
+                height: 44px;
+                font: 13px arial;
+                line-height: 44px;
+                color: white;
+            }
         </style>
 
         <iron-ajax
                 id="activitiesLoader"
                 url="[[url]]"
                 last-response="{{activities}}"
-                params='{"page":"0", "per_page":"60"}' auto></iron-ajax>
+                params="{{pars}}" auto></iron-ajax>
 
-        <template is="dom-repeat" items="{{activities}}">
-            <paper-material elevation="0" class="activity-object" on-click="navigateToActivity">
+        <iron-ajax
+                id="activitiesLazyLoader"
+                url="[[url]]"
+                on-response="appendToActivities"
+                last-response="{{extraActivities}}"
+                params="{{lazyparams}}"></iron-ajax>
 
-                <template is="dom-if" if="{{item.user.profileImage}}">
-                    <img src="{{item.user.profileImage}}">
-                </template>
+        <iron-scroll-threshold on-lower-threshold="loadMoreData"
+                               id="scrollThreshold"
+                               lower-threshold="500"
+                               scroll-target="document">
+            <template is="dom-repeat" items="{{activities}}" id="resultList">
+                <paper-material elevation="0" class="activity-object" on-click="navigateToActivity">
 
-                <div>
-                    <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
-                    <span>[[calculateActivityMessage(item)]]</span>
+                    <template is="dom-if" if="{{item.user.profileImage}}">
+                        <img src="{{item.user.profileImage}}">
+                    </template>
+
                     <div>
-                        <time is="relative-time" class="creationTime" datetime$="[[item.creationTime]]"></time>
+                        <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
+                        <span>{{calculateActivityMessage(item)}}</span>
+                        <div>
+                            <time is="relative-time" class="creationTime" datetime$="{{item.creationTime}}"></time>
+                        </div>
+
+                        <!--
+                        <p class="ellipsis activity-title">{{item.dataType}}</p>
+                        <p class="multiline-ellipsis" style="margin-bottom: 6px">{{item.activityAction}}</p>
+                        <p class="time-and-creator">
+                            <time class="creationTime" is="relative-time"></time>
+                            <span> by </span>
+                            <span>{{item.user.userName}}</span>
+                        </p>-->
+
                     </div>
 
-                    <!--
-                    <p class="ellipsis activity-title">{{item.dataType}}</p>
-                    <p class="multiline-ellipsis" style="margin-bottom: 6px">{{item.activityAction}}</p>
-                    <p class="time-and-creator">
-                        <time class="creationTime" is="relative-time"></time>
-                        <span> by </span>
-                        <span>{{item.user.userName}}</span>
-                    </p>-->
-
-                </div>
-
-            </paper-material>
-        </template>
+                </paper-material>
+            </template>
+        </iron-scroll-threshold>
+        <div class="loader">Fetching new items...</div>
     </template>
 
 </dom-module>
@@ -146,6 +168,20 @@ Example:
                 type: Array,
                 notify: true,
                 value: null
+            },
+            extraActivities: {
+                type: Array,
+                notify: true,
+                value: null
+            },
+            pars: {
+                type: Object,
+                notify: true,
+                value: {"limit": 20}
+            },
+            lazyparams:{
+                type: Object,
+                notify: true
             }
         },
 
@@ -268,6 +304,20 @@ Example:
             }
 
             return actionString + ' ' + typeString + ' ' + dataString + '.';
+        },
+
+        loadMoreData: function(){
+            if (this.activities != null){
+                this.lazyparams = {"limit": 5, "before": this.activities[this.activities.length - 1].id};
+                this.$.activitiesLazyLoader.generateRequest();
+            }
+            this.$.scrollThreshold.clearTriggers();
+        },
+
+        appendToActivities: function(){
+            for (var i = 0; i <= this.extraActivities.length - 1; i++) {
+                this.push("activities", this.extraActivities[i]);
+            }
         },
 
         /**
