@@ -315,8 +315,10 @@ Example:
         },
 
         appendToActivities: function(){
-            for (var i = 0; i <= this.extraActivities.length - 1; i++) {
-                this.push("activities", this.extraActivities[i]);
+            if (this.extraActivities){
+                for (var i = 0; i <= this.extraActivities.length - 1; i++) {
+                    this.push("activities", this.extraActivities[i]);
+                }
             }
         },
 
