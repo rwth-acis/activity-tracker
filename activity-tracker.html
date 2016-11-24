@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-material/paper-material.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="../iron-scroll-threshold/iron-scroll-threshold.html">
 
 <script src="../time-elements/time-elements.js"></script>
@@ -93,7 +94,7 @@ Example:
             .activity-title{
                 font-weight: bold;
             }
-            .loader {
+            .loadingNotification {
                 background-color: #0b8043;
                 text-align: center;
                 height: 44px;
@@ -104,17 +105,17 @@ Example:
         </style>
 
         <iron-ajax
-                id="activitiesLoader"
-                url="[[url]]"
-                last-response="{{activities}}"
-                params="{{pars}}" auto></iron-ajax>
+          id="activitiesLoader"
+          url="[[url]]"
+          last-response="{{activities}}"
+          params="{{pars}}" auto></iron-ajax>
 
         <iron-ajax
-                id="activitiesLazyLoader"
-                url="[[url]]"
-                on-response="appendToActivities"
-                last-response="{{extraActivities}}"
-                params="{{lazyparams}}"></iron-ajax>
+          id="activitiesLazyLoader"
+          url="[[url]]"
+          on-response="appendToActivities"
+          last-response="{{extraActivities}}"
+          params="{{lazyparams}}"></iron-ajax>
 
         <iron-scroll-threshold on-lower-threshold="loadMoreData"
                                id="scrollThreshold"
@@ -131,194 +132,184 @@ Example:
                         <span class="creator">{{item.user.firstName}} {{item.user.lastName}}</span>
                         <span>{{calculateActivityMessage(item)}}</span>
                         <div>
-                            <time is="relative-time" class="creationTime" datetime$="{{item.creationTime}}"></time>
+                            <relative-time class="creationTime" datetime$="{{item.creationTime}}"></relative-time>
                         </div>
-
-                        <!--
-                        <p class="ellipsis activity-title">{{item.dataType}}</p>
-                        <p class="multiline-ellipsis" style="margin-bottom: 6px">{{item.activityAction}}</p>
-                        <p class="time-and-creator">
-                            <time class="creationTime" is="relative-time"></time>
-                            <span> by </span>
-                            <span>{{item.user.userName}}</span>
-                        </p>-->
-
                     </div>
 
                 </paper-material>
             </template>
         </iron-scroll-threshold>
-        <div class="loader">Fetching new items...</div>
+        <div class="loadingNotification">Fetching new items...</div>
     </template>
 
 </dom-module>
 
 <script>
 
-    Polymer({
+  Polymer({
 
-        is: 'activity-tracker',
+    is: 'activity-tracker',
 
-        properties: {
-            url: {
-                type: String,
-                value: 'https://requirements-bazaar.org/betaactivities'
-            },
-            activities:{
-                type: Array,
-                notify: true,
-                value: null
-            },
-            extraActivities: {
-                type: Array,
-                notify: true,
-                value: null
-            },
-            pars: {
-                type: Object,
-                notify: true,
-                value: {"limit": 30}
-            },
-            lazyparams:{
-                type: Object,
-                notify: true
-            }
-        },
-
-
-        attached: function() {
-
-            // If a redirectURL is set then turn the cursor into a pointer to show that there is navigation
-            if(this.activities){
-                var times = Polymer.dom(this.root).querySelectorAll('.activity-object');
-                for(var i in times){
-                    if(this.activities[i].redirectURL){
-                        times[i].style.cursor = 'pointer';
-                    }
-                }
-            }
-        },
+    properties: {
+      url: {
+        type: String,
+        value: 'https://requirements-bazaar.org/betaactivities'
+      },
+      activities:{
+        type: Array,
+        notify: true,
+        value: null
+      },
+      extraActivities: {
+        type: Array,
+        notify: true,
+        value: null
+      },
+      pars: {
+        type: Object,
+        notify: true,
+        value: {"limit": 30}
+      },
+      lazyparams:{
+        type: Object,
+        notify: true
+      }
+    },
 
 
-        /**
-         * Calculates the redirect URL for showing an appropriate frontend for the type of activity.
-         *
-         */
-        navigateToActivity: function(elem){
-            window.location = elem.model.__data__.item.dataFrontendUrl;
-            /*
-            var redirectUrl = '';
+    attached: function() {
 
-            // for a comment, it's the requirements ID
-            if (elem.model.__data__.item.dataType === 'PROJECT') {
-                redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.id;
-            } else if (elem.model.__data__.item.dataType === 'REQUIREMENT') {
-                redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.projectId + '/components/' + elem.model.__data__.item.data.components[0].id + '/requirements/' + elem.model.__data__.item.data.id;
-            }
-
-            if (redirectUrl !== ''){
-                window.location = redirectUrl;
-            }
-            */
-        },
-
-        /**
-         * Calculates the text that is shown in the activity list entry.
-         *
-         * @param action the action of the activity.
-         * @param type the type of the activity.
-         * @param data the data object returned from the server.
-         * @returns {string}
-         */
-        calculateActivityMessage: function(item) {
-            var action = item.activityAction;
-            var type = item.dataType;
-            var data = item.data;
-            var parentData = item.parentData;
-
-            var message = '';
-            var actionString = '';
-            var typeString = '';
-            var dataString = '';
-
-            switch (action) {
-                case 'CREATE':
-                    actionString = 'created';
-                    break;
-                case 'UPDATE':
-                    actionString = 'updated';
-                    break;
-                case 'DELETE':
-                    actionString = 'deleted';
-                    break;
-                case 'REALIZE':
-                    actionString = 'realized';
-                    break;
-                case 'VOTE':
-                    actionString = 'voted for';
-                    break;
-                case 'UNVOTE':
-                    actionString = 'unvoted';
-                    break;
-                case 'DEVELOP':
-                    actionString = 'started developing';
-                    break;
-                case 'UNDEVELOP':
-                    actionString = 'stopped developing';
-                    break;
-                case 'FOLLOW':
-                    actionString = 'followed';
-                    break;
-                case 'UNFOLLOW':
-                    actionString = 'unfollowed';
-                    break;
-            }
-
-            switch (type) {
-                case 'PROJECT':
-                    typeString = 'the project';
-                    dataString = '"' + data.name + '"';
-                    break;
-                case 'COMPONENT':
-                    typeString = 'the component';
-                    dataString = '"' + data.name + '" in the project "' + parentData.name + '"';
-                    break;
-                case 'REQUIREMENT':
-                    typeString = 'the requirement';
-                    dataString = '"' + data.title + '"';
-                    break;
-                case 'COMMENT':
-                    typeString = 'a comment for the requirement';
-                    dataString = '"' + parentData.title + '"';
-                    break;
-            }
-
-            return actionString + ' ' + typeString + ' ' + dataString + '.';
-        },
-
-        loadMoreData: function(){
-            if (this.activities != null){
-                this.lazyparams = {"limit": 5, "before": this.activities[this.activities.length - 1].id};
-                this.$.activitiesLazyLoader.generateRequest();
-            }
-            this.$.scrollThreshold.clearTriggers();
-        },
-
-        appendToActivities: function(){
-            if (this.extraActivities){
-                for (var i = 0; i <= this.extraActivities.length - 1; i++) {
-                    this.push("activities", this.extraActivities[i]);
-                }
-            }
-        },
-
-        /**
-         * Refreshes the activities from the server.
-         */
-        refresh: function() {
-            this.$.activitiesLoader.generateRequest();
+      // If a redirectURL is set then turn the cursor into a pointer to show that there is navigation
+      if(this.activities){
+        var times = Polymer.dom(this.root).querySelectorAll('.activity-object');
+        for(var i in times){
+          if(this.activities[i].redirectURL){
+            times[i].style.cursor = 'pointer';
+          }
         }
+      }
+    },
 
-    });
+
+    /**
+     * Calculates the redirect URL for showing an appropriate frontend for the type of activity.
+     *
+     */
+    navigateToActivity: function(elem){
+      window.location = elem.model.__data__.item.dataFrontendUrl;
+        /*
+         var redirectUrl = '';
+
+         // for a comment, it's the requirements ID
+         if (elem.model.__data__.item.dataType === 'PROJECT') {
+         redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.id;
+         } else if (elem.model.__data__.item.dataType === 'REQUIREMENT') {
+         redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.projectId + '/components/' + elem.model.__data__.item.data.components[0].id + '/requirements/' + elem.model.__data__.item.data.id;
+         }
+
+         if (redirectUrl !== ''){
+         window.location = redirectUrl;
+         }
+         */
+    },
+
+    /**
+     * Calculates the text that is shown in the activity list entry.
+     *
+     * @param action the action of the activity.
+     * @param type the type of the activity.
+     * @param data the data object returned from the server.
+     * @returns {string}
+     */
+    calculateActivityMessage: function(item) {
+      var action = item.activityAction;
+      var type = item.dataType;
+      var data = item.data;
+      var parentData = item.parentData;
+
+      var message = '';
+      var actionString = '';
+      var typeString = '';
+      var dataString = '';
+
+      switch (action) {
+        case 'CREATE':
+          actionString = 'created';
+          break;
+        case 'UPDATE':
+          actionString = 'updated';
+          break;
+        case 'DELETE':
+          actionString = 'deleted';
+          break;
+        case 'REALIZE':
+          actionString = 'realized';
+          break;
+        case 'VOTE':
+          actionString = 'voted for';
+          break;
+        case 'UNVOTE':
+          actionString = 'unvoted';
+          break;
+        case 'DEVELOP':
+          actionString = 'started developing';
+          break;
+        case 'UNDEVELOP':
+          actionString = 'stopped developing';
+          break;
+        case 'FOLLOW':
+          actionString = 'followed';
+          break;
+        case 'UNFOLLOW':
+          actionString = 'unfollowed';
+          break;
+      }
+
+      switch (type) {
+        case 'PROJECT':
+          typeString = 'the project';
+          dataString = '"' + data.name + '"';
+          break;
+        case 'COMPONENT':
+          typeString = 'the component';
+          dataString = '"' + data.name + '" in the project "' + parentData.name + '"';
+          break;
+        case 'REQUIREMENT':
+          typeString = 'the requirement';
+          dataString = '"' + data.title + '"';
+          break;
+        case 'COMMENT':
+          typeString = 'a comment for the requirement';
+          dataString = '"' + parentData.title + '"';
+          break;
+      }
+
+      return actionString + ' ' + typeString + ' ' + dataString + '.';
+    },
+
+    loadMoreData: function(){
+      if (this.activities != null){
+        this.lazyparams = {"limit": 5, "before": this.activities[this.activities.length - 1].id};
+        this.$.activitiesLazyLoader.generateRequest();
+      }
+      this.$.scrollThreshold.clearTriggers();
+    },
+
+    appendToActivities: function(){
+      if (this.extraActivities){
+        for (var i = 0; i <= this.extraActivities.length - 1; i++) {
+          this.push("activities", this.extraActivities[i]);
+        }
+      }
+    },
+
+    /**
+     * Refreshes the activities from the server.
+     */
+    refresh: function() {
+      this.$.activitiesLoader.generateRequest();
+    }
+
+  });
 
 </script>
