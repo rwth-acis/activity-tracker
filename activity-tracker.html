@@ -188,16 +188,6 @@ Example:
 
         attached: function() {
 
-            // This is used to set the time for the time element
-            this.async(function() {
-                // access sibling or parent elements here
-                var times = Polymer.dom(this.root).querySelectorAll('.creationTime');
-
-                for (var i in times){
-                    times[i].setAttribute('datetime', this.activities[i].creationTime);
-                }
-            });
-
             // If a redirectURL is set then turn the cursor into a pointer to show that there is navigation
             if(this.activities){
                 var times = Polymer.dom(this.root).querySelectorAll('.activity-object');
