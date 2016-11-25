@@ -142,7 +142,8 @@ Example:
     <div class="loadingIndicator">Fetching new items...</div>
 
     <!-- this element will load more data when the user scrolls down and reached the lower threshold -->
-    <iron-scroll-threshold id="scrollThreshold"lower-threshold="500"
+    <iron-scroll-threshold id="scrollThreshold"
+      lower-threshold="500"
       on-lower-threshold="_loadMoreData"
       scroll-target="document">
     </iron-scroll-threshold>
@@ -158,25 +159,57 @@ Example:
     is: 'activity-tracker',
 
     properties: {
+      /**
+       * The URL of the Activity Tracker service.
+       */
       url: {
         type: String,
         value: 'https://requirements-bazaar.org/betaactivities'
       },
+      /**
+       * An array of activity objects.
+       */
       activities: {
         type: Array,
         notify: true,
         value: []
       },
+      /**
+       * The parameters for the HTTP call to the backend service.
+       */
       _params: {
         type: Object,
-        notify: true,
-        value: {"limit": 30}
+        notify: true
       },
       /**
-       * true if activities are being loaded.
+       * Defines how many activites should get fetched from the server initially. Usually it's good practice to fill the
+       * height of the window.
+       */
+      initialLimit: {
+        type: Number,
+        value: 30
+      },
+      /**
+       * Set to true when activities are being loaded.
        */
       _loadingActivities: {
         type: Boolean
+      },
+      /**
+       * The interval in seconds when the activity tracker should update itself. Set to 0 to deactivate auto-updating.
+       */
+      autoUpdateInterval: {
+        type: Number,
+        value: 30
+      }
+    },
+
+    /**
+     * Called after the properties are set. Starts the auto update if set.
+     */
+    ready: function() {
+      if (this.autoUpdateInterval > 0) {
+        setInterval(function() { this.refresh(); }.bind(this), (this.autoUpdateInterval * 1000));
       }
     },
 
@@ -184,22 +217,8 @@ Example:
      * Calculates the redirect URL for showing an appropriate frontend for the type of activity.
      *
      */
-    navigateToActivity: function(elem){
-      window.location = elem.model.__data__.item.dataFrontendUrl;
-        /*
-         var redirectUrl = '';
-
-         // for a comment, it's the requirements ID
-         if (elem.model.__data__.item.dataType === 'PROJECT') {
-         redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.id;
-         } else if (elem.model.__data__.item.dataType === 'REQUIREMENT') {
-         redirectUrl = 'https://requirements-bazaar.org/beta/#!/projects/' + elem.model.__data__.item.data.projectId + '/components/' + elem.model.__data__.item.data.components[0].id + '/requirements/' + elem.model.__data__.item.data.id;
-         }
-
-         if (redirectUrl !== ''){
-         window.location = redirectUrl;
-         }
-         */
+    navigateToActivity: function(e) {
+      window.location = e.model.activity.dataFrontendUrl;
     },
 
     /**
@@ -210,11 +229,11 @@ Example:
      * @param data the data object returned from the server.
      * @returns {string}
      */
-    _calculateActivityMessage: function(item) {
-      var action = item.activityAction;
-      var type = item.dataType;
-      var data = item.data;
-      var parentData = item.parentData;
+    _calculateActivityMessage: function(activity) {
+      var action = activity.activityAction;
+      var type = activity.dataType;
+      var data = activity.data;
+      var parentData = activity.parentData;
 
       var message = '';
       var actionString = '';
@@ -276,40 +295,53 @@ Example:
       return actionString + ' ' + typeString + ' ' + dataString + '.';
     },
 
+    /**
+     * Handles the response coming from the request to the activity tracker service.
+     *
+     * @param e
+     */
     _handleActivitiesResponse: function(e) {
       var activitiesResponse = e.detail.response;
 
-      activitiesResponse.forEach(function(activity) {
-        //TODO: use unshift if we queried with params "after"
-        this.push('activities', activity);
-      }.bind(this));
+      // check if we are updating (then, there is a parameter called 'after')
+      if (e.target.params.after) {
+        activitiesResponse.forEach(function(activity) {
+          this.unshift('activities', activity);
+        }.bind(this));
+      } else {
+        activitiesResponse.forEach(function(activity) {
+          this.push('activities', activity);
+        }.bind(this));
+      }
 
       // Clear the lower threshold so we can load more data when the user scrolls down again.
       this.$.scrollThreshold.clearTriggers();
     },
 
+    /**
+     * Loads more activities from the service, usually as the effect of scrolling down. Queries with the 'before'
+     * parameter to get activities that are older than the last one in the list.
+     */
     _loadMoreData: function() {
-      if (this.activities.length > 0){
-        this._params = {"limit": 5, "before": this.activities[this.activities.length - 1].id};
+      // check if the first request has already returned
+      if (this.activities.length > 0) {
+        this._params = {'limit': 5, 'before': this.activities[this.activities.length - 1].id};
+      } else {
+        this._params = {'limit': this.initialLimit};
       }
 
       this.$.activitiesRequest.generateRequest();
     },
 
-    appendToActivities: function(){
-      if (this.extraActivities){
-        for (var i = 0; i <= this.extraActivities.length - 1; i++) {
-          this.push("activities", this.extraActivities[i]);
-        }
-      }
-    },
-
     /**
-     * Refreshes the activities from the server.
+     * Refreshes the activities from the server. Sends the 'after' query parameter to only get updates.
      */
     refresh: function() {
-      //TODO: fix this, we need to either clear activities and load everything, or use the "after" query parameter
-      //this.$.activitiesRequest.generateRequest();
+      if (this.activities.length > 0) {
+        this._params = {'limit': 20, 'after': this.activities[0].id};
+      }
+
+      this.$.activitiesRequest.generateRequest();
     }
 
   });
