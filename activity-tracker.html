@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="../iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
 
 <script src="../time-elements/time-elements.js"></script>
 
@@ -104,12 +105,16 @@ Example:
       }
 
       .loadingIndicator {
-        background-color: #0b8043;
+        padding-top: 15px;
+        background-color: lightgray;
         text-align: center;
         height: 44px;
-        font: 13px arial;
-        line-height: 44px;
-        color: white;
+      }
+
+      .loadingIndicator paper-spinner {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
       }
     </style>
 
@@ -139,7 +144,9 @@ Example:
 
     </iron-list>
 
-    <div class="loadingIndicator">Fetching new items...</div>
+    <div class="loadingIndicator">
+      <paper-spinner active="{{_loadingActivities}}"></paper-spinner> Loading activities...
+    </div>
 
     <!-- this element will load more data when the user scrolls down and reached the lower threshold -->
     <iron-scroll-threshold id="scrollThreshold"
