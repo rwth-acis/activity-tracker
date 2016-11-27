@@ -1,9 +1,9 @@
 {
   "name": "activity-tracker",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "authors": [
-    "Kristjan Liiva",
-    "István Koren"
+    "István Koren",
+    "Kristjan Liiva"
   ],
   "description": "An element showing a list of activities, who created it and when.",
   "keywords": [
