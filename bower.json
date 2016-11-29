@@ -3,6 +3,7 @@
   "version": "1.1.0",
   "authors": [
     "István Koren",
+    "Albi Sema",
     "Kristjan Liiva"
   ],
   "description": "An element showing a list of activities, who created it and when.",
