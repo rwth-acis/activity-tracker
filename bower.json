@@ -1,9 +1,10 @@
 {
   "name": "activity-tracker",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "authors": [
-    "Kristjan Liiva",
-    "István Koren"
+    "István Koren",
+    "Albi Sema",
+    "Kristjan Liiva"
   ],
   "description": "An element showing a list of activities, who created it and when.",
   "keywords": [
@@ -20,11 +21,13 @@
     "/test/"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.1.0",
-    "paper-material": "PolymerElements/paper-material#~1.0.1",
-    "time-elements": "~0.4.0",
+    "polymer": "Polymer/polymer#^1.7.0",
+    "paper-material": "PolymerElements/paper-material#^1.0.1",
+    "time-elements": "^0.6.0",
     "iron-ajax": "PolymerElements/iron-ajax#^1.0.0",
-    "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#^1.0.2"
+    "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#^1.0.2",
+    "iron-list": "PolymerElements/iron-list#^1.3.14",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.2.1"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
