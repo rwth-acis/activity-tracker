@@ -13,6 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="../iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../paper-spinner/paper-spinner.html">
 
 <script src="../time-elements/time-elements.js"></script>
@@ -37,71 +38,44 @@ Example:
         display: block;
         box-sizing: border-box;
         font-size: 14px;
+        width: 100%;
       }
 
-      .creator {
-        font-weight: bold;
+      .activitiesList {
+        @apply(--layout-vertical);
       }
 
-
-      p, div, h2 {
+      .activity {
+        @apply(--layout-horizontal);
         color: #212121;
-      }
-
-      p {
-        margin: 2px;
-      }
-
-      .creationTime {
-        opacity: 0.87;
-        font-size: small;
-      }
-
-      .ellipsis {
-        text-overflow: ellipsis;
-
-        /* Required for text-overflow to do anything */
-        white-space: nowrap;
-        overflow: hidden;
-      }
-
-      .multiline-ellipsis {
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2; /* number of lines to show */
-        line-height: 20px;        /* fallback */
-        max-height: 60px;       /* fallback */
-      }
-
-      .activity-object{
         padding: 2px;
         padding-bottom: 8px;
-        display: flex;
         border-bottom: 1px solid gainsboro;
         cursor: pointer;
-        cursor: hand;
       }
 
-      .activity-object:hover{
+      .activity:hover{
         background-color: lightgray;
       }
 
-      .activity-object > img{
+      .activity > img {
         margin-right: 8px;
         width: 35px;
         height: 35px;
         border-radius: 50%;
       }
 
-      .activity-object > div{
-        overflow: auto;
+      .activity > div {
+        @apply(--layout-flex);
       }
 
-      .activity-title{
+      .creator {
         font-weight: bold;
+      }
+
+      .creationTime {
+        opacity: 0.87;
+        font-size: small;
       }
 
       .loadingIndicator {
@@ -127,19 +101,16 @@ Example:
 
     <iron-list id="activitiesList" items="[[activities]]" as="activity">
       <template>
-        <paper-material elevation="0" class="activity-object" on-click="navigateToActivity">
-
+        <div class="activity">
           <img src="[[activity.user.profileImage]]">
-
+          <div>
+            <span class="creator">[[activity.user.firstName]] [[activity.user.lastName]]</span>
+            <span>[[_calculateActivityMessage(activity)]]</span>
             <div>
-              <span class="creator">[[activity.user.firstName]] [[activity.user.lastName]]</span>
-              <span>[[_calculateActivityMessage(activity)]]</span>
-              <div>
-                <relative-time class="creationTime" datetime$="{{activity.creationTime}}"></relative-time>
-              </div>
+              <relative-time class="creationTime" datetime$="{{activity.creationTime}}"></relative-time>
             </div>
-
-        </paper-material>
+          </div>
+        </div>
       </template>
 
     </iron-list>
