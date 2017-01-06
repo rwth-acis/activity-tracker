@@ -44,8 +44,14 @@ Example:
         overflow: auto;
       }
 
-      .activitiesList {
+      #activitiesList {
         @apply(--layout-vertical);
+      }
+
+      #activitiesList a {
+        width: 100%;
+        color: inherit;
+        text-decoration: none;
       }
 
       .activity {
@@ -106,16 +112,18 @@ Example:
 
       <iron-list id="activitiesList" items="[[activities]]" as="activity">
         <template>
-          <div class="activity">
-            <img src="[[activity.user.profileImage]]">
-            <div>
-              <span class="creator">[[activity.user.firstName]] [[activity.user.lastName]]</span>
-              <span>[[_calculateActivityMessage(activity)]]</span>
+          <a href$="[[activity.dataFrontendUrl]]">
+            <div class="activity">
+              <img src="[[activity.user.profileImage]]">
               <div>
-                <relative-time class="creationTime" datetime$="{{activity.creationTime}}"></relative-time>
+                <span class="creator">[[activity.user.firstName]] [[activity.user.lastName]]</span>
+                <span>[[_calculateActivityMessage(activity)]]</span>
+                <div>
+                  <relative-time class="creationTime" datetime$="{{activity.creationTime}}"></relative-time>
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         </template>
 
       </iron-list>
@@ -196,14 +204,6 @@ Example:
       if (this.autoUpdateInterval > 0) {
         setInterval(function() { this.refresh(); }.bind(this), (this.autoUpdateInterval * 1000));
       }
-    },
-
-    /**
-     * Calculates the redirect URL for showing an appropriate frontend for the type of activity.
-     *
-     */
-    navigateToActivity: function(e) {
-      window.location = e.model.activity.dataFrontendUrl;
     },
 
     /**
