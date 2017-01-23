@@ -9,10 +9,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../paper-material/paper-material.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="../iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../paper-spinner/paper-spinner.html">
 
 <script src="../time-elements/time-elements.js"></script>
@@ -39,69 +39,52 @@ Example:
         font-size: 14px;
       }
 
-      .creator {
-        font-weight: bold;
+      #scrollContainer {
+        height: 100%;
+        overflow: auto;
       }
 
+      #activitiesList {
+        @apply(--layout-vertical);
+      }
 
-      p, div, h2 {
+      #activitiesList a {
+        width: 100%;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .activity {
+        @apply(--layout-horizontal);
         color: #212121;
-      }
-
-      p {
-        margin: 2px;
-      }
-
-      .creationTime {
-        opacity: 0.87;
-        font-size: small;
-      }
-
-      .ellipsis {
-        text-overflow: ellipsis;
-
-        /* Required for text-overflow to do anything */
-        white-space: nowrap;
-        overflow: hidden;
-      }
-
-      .multiline-ellipsis {
-        margin: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2; /* number of lines to show */
-        line-height: 20px;        /* fallback */
-        max-height: 60px;       /* fallback */
-      }
-
-      .activity-object{
         padding: 2px;
         padding-bottom: 8px;
-        display: flex;
         border-bottom: 1px solid gainsboro;
         cursor: pointer;
-        cursor: hand;
       }
 
-      .activity-object:hover{
+      .activity:hover{
         background-color: lightgray;
       }
 
-      .activity-object > img{
+      .activity > img {
         margin-right: 8px;
         width: 35px;
         height: 35px;
         border-radius: 50%;
       }
 
-      .activity-object > div{
-        overflow: auto;
+      .activity > div {
+        @apply(--layout-flex);
       }
 
-      .activity-title{
+      .creator {
         font-weight: bold;
+      }
+
+      .creationTime {
+        opacity: 0.87;
+        font-size: small;
       }
 
       .loadingIndicator {
@@ -125,34 +108,37 @@ Example:
       params="{{_params}}"
       on-response="_handleActivitiesResponse"></iron-ajax>
 
-    <iron-list id="activitiesList" items="[[activities]]" as="activity">
-      <template>
-        <paper-material elevation="0" class="activity-object" on-click="navigateToActivity">
+    <div id="scrollContainer">
 
-          <img src="[[activity.user.profileImage]]">
-
-            <div>
-              <span class="creator">[[activity.user.firstName]] [[activity.user.lastName]]</span>
-              <span>[[_calculateActivityMessage(activity)]]</span>
+      <iron-list id="activitiesList" items="[[activities]]" as="activity">
+        <template>
+          <a href$="[[activity.dataFrontendUrl]]">
+            <div class="activity">
+              <img src="[[activity.user.profileImage]]">
               <div>
-                <relative-time class="creationTime" datetime$="{{activity.creationTime}}"></relative-time>
+                <span class="creator">[[activity.user.firstName]] [[activity.user.lastName]]</span>
+                <span>[[_calculateActivityMessage(activity)]]</span>
+                <div>
+                  <relative-time class="creationTime" datetime$="{{activity.creationTime}}"></relative-time>
+                </div>
               </div>
             </div>
+          </a>
+        </template>
 
-        </paper-material>
-      </template>
+      </iron-list>
 
-    </iron-list>
+      <div class="loadingIndicator">
+        <paper-spinner active="{{_loadingActivities}}"></paper-spinner> Loading activities...
+      </div>
 
-    <div class="loadingIndicator">
-      <paper-spinner active="{{_loadingActivities}}"></paper-spinner> Loading activities...
     </div>
 
     <!-- this element will load more data when the user scrolls down and reached the lower threshold -->
     <iron-scroll-threshold id="scrollThreshold"
       lower-threshold="500"
       on-lower-threshold="_loadMoreData"
-      scroll-target="document">
+      scroll-target="scrollContainer">
     </iron-scroll-threshold>
 
   </template>
@@ -221,14 +207,6 @@ Example:
     },
 
     /**
-     * Calculates the redirect URL for showing an appropriate frontend for the type of activity.
-     *
-     */
-    navigateToActivity: function(e) {
-      window.location = e.model.activity.dataFrontendUrl;
-    },
-
-    /**
      * Calculates the text that is shown in the activity list entry.
      *
      * @param action the action of the activity.
@@ -277,6 +255,12 @@ Example:
           break;
         case 'UNFOLLOW':
           actionString = 'unfollowed';
+          break;
+        case 'LEADDEVELOP':
+          actionString = 'became lead developer of';
+          break;
+        case 'UNLEADDEVELOP':
+          actionString = 'no longer is lead developer of';
           break;
       }
 
