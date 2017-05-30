@@ -56,6 +56,7 @@ Example:
 
       .activity {
         @apply(--layout-horizontal);
+        min-height: 35px;
         color: #212121;
         padding: 2px;
         padding-bottom: 8px;
@@ -82,7 +83,7 @@ Example:
         font-weight: bold;
       }
 
-      .creationTime {
+      .creationDate {
         opacity: 0.87;
         font-size: small;
       }
@@ -119,7 +120,7 @@ Example:
                 <span class="creator">[[activity.user.firstName]] [[activity.user.lastName]]</span>
                 <span>[[_calculateActivityMessage(activity)]]</span>
                 <div>
-                  <relative-time class="creationTime" datetime$="{{activity.creationTime}}"></relative-time>
+                  <relative-time class="creationDate" datetime$="{{activity.creationDate}}"></relative-time>
                 </div>
               </div>
             </div>
@@ -275,11 +276,11 @@ Example:
           break;
         case 'REQUIREMENT':
           typeString = 'the requirement';
-          dataString = '"' + data.title + '"';
+          dataString = '"' + data.name + '"';
           break;
         case 'COMMENT':
           typeString = 'a comment for the requirement';
-          dataString = '"' + parentData.title + '"';
+          dataString = '"' + parentData.name + '"';
           break;
       }
 
