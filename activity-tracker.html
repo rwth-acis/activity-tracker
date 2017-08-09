@@ -113,7 +113,7 @@ Example:
 
       <iron-list id="activitiesList" items="[[activities]]" as="activity">
         <template>
-          <a href$="[[activity.dataFrontendUrl]]">
+          <a href$="[[activity.dataFrontendUrl]]" on-click="_handleClickActivityAction">
             <div class="activity">
               <img src="[[activity.user.profileImage]]">
               <div>
@@ -309,6 +309,13 @@ Example:
       // Clear the lower threshold so we can load more data when the user scrolls down again.
       this.$.scrollThreshold.clearTriggers();
     },
+
+      /**
+       * Triggers the useActivityTracker-Action of gamification when the user clicks an activity.
+       */
+      _handleClickActivityAction: function () {
+          this.fire('iron-signal', {name: 'gamification', data: 'useActivityTracker'});
+      },
 
     /**
      * Loads more activities from the service, usually as the effect of scrolling down. Queries with the 'before'
