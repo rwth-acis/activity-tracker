@@ -300,6 +300,9 @@ Example:
         activitiesResponse.forEach(function(activity) {
           this.unshift('activities', activity);
         }.bind(this));
+        if (activitiesResponse.length > 0) {
+          this._newActivitiesViaAutoUpdate(activitiesResponse);
+        }
       } else {
         activitiesResponse.forEach(function(activity) {
           this.push('activities', activity);
@@ -334,6 +337,14 @@ Example:
       }
 
       this.$.activitiesRequest.generateRequest();
+    },
+
+    /**
+     * Fires an events to inform that new activities are added via auto update.
+     * @param activities the new loaded activities
+     */
+    _newActivitiesViaAutoUpdate: function(activities) {
+      this.fire('_newActivitiesViaAutoUpdate', activities);
     }
 
   });
