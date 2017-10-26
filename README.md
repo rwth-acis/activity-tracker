@@ -8,23 +8,21 @@ The element has one attribute:
 
 url - The base URL of the activity tracker service.
 ```
+
 ## Example
-<activity-tracker url="https://requirements-bazaar.org/beta/activities"></activity-tracker>
+```html
+<activity-tracker url="https://requirements-bazaar.org/betaactivities"></activity-tracker>
+
 ```
 
 ## Development Environment
 
-This element is best tested during development using `polymer serve`. To install polymer, run
+This element is best tested during development using `polyserve`. To install, run
 ```
-npm install -g bower
-npm install -g polymer
-```
-Install all component dependencies with
-```
-polymer install
+npm install -g polyserve
 ```
 You may then use it to start a small development server using
 ```
-polymer serve
+polyserve
 ```
 
