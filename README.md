@@ -15,10 +15,9 @@ url - The base URL of the activity tracker service.
 
 ## Development Environment
 
-This element is best tested during development using `polymer serve`. To install polymer, run
+This element is best tested during development using `polymer serve`. To install the Polymer CLI, run
 ```
-npm install -g bower
-npm install -g polymer
+npm install -g polymer-cli
 ```
 Install all component dependencies with
 ```
