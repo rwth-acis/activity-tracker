@@ -7,8 +7,9 @@ See the [component page](https://rwth-acis.github.io/activity-tracker) for more 
 The element has one attribute:
 
 url - The base URL of the activity tracker service.
-```
+
 ## Example
+```html
 <activity-tracker url="https://requirements-bazaar.org/beta/activities"></activity-tracker>
 ```
 
