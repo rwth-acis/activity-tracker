@@ -113,7 +113,7 @@ Example:
 
       <iron-list id="activitiesList" items="[[activities]]" as="activity">
         <template>
-          <a href$="[[activity.dataFrontendUrl]]" on-tap="_handleClickActivityEvent">
+          <a href$="[[activity.dataFrontendUrl]]" on-tap="_handleActivityTap">
             <div class="activity">
               <img src="[[activity.user.profileImage]]">
               <div>
@@ -301,7 +301,7 @@ Example:
           this.unshift('activities', activity);
         }.bind(this));
         if (activitiesResponse.length > 0) {
-          this._handleNewActivitiesLoadedEvent(activitiesResponse);
+          this._fireNewActivitiesEvent(activitiesResponse);
         }
       } else {
         activitiesResponse.forEach(function(activity) {
@@ -345,7 +345,7 @@ Example:
      * @event activity was clicked
      * @param event
      */
-    _handleClickActivityEvent: function (e) {
+    _handleActivityTap: function (e) {
       this.fire('activity-clicked', e.model.get('activity'));
     },
 
@@ -353,10 +353,10 @@ Example:
      * Fires new-activities-loaded event when that new activities are added via auto update.
      *
      * @event new activities are added via auto update
-     * @param activities the new loaded activities
+     * @param activities the number of newly loaded activities
      */
-    _handleNewActivitiesLoadedEvent: function(activities) {
-      this.fire('new-activities-loaded', activities);
+    _fireNewActivitiesEvent: function(activities) {
+      this.fire('new-activities-loaded', activities.length);
     }
 
   });
