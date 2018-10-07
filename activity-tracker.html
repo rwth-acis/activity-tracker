@@ -113,7 +113,7 @@ Example:
 
       <iron-list id="activitiesList" items="[[activities]]" as="activity">
         <template>
-          <a href$="[[activity.dataFrontendUrl]]">
+          <a href$="[[activity.dataFrontendUrl]]" on-tap="_handleActivityTap">
             <div class="activity">
               <img src="[[activity.user.profileImage]]">
               <div>
@@ -301,6 +301,9 @@ Example:
         activitiesResponse.forEach(function(activity) {
           this.unshift('activities', activity);
         }.bind(this));
+        if (activitiesResponse.length > 0) {
+          this._fireNewActivitiesEvent(activitiesResponse);
+        }
       } else {
         activitiesResponse.forEach(function(activity) {
           this.push('activities', activity);
@@ -335,6 +338,26 @@ Example:
       }
 
       this.$.activitiesRequest.generateRequest();
+    },
+
+    /**
+     * Fires activity-clicked event when user clicked an activity.
+     *
+     * @event activity was clicked
+     * @param event
+     */
+    _handleActivityTap: function (e) {
+      this.fire('activity-clicked', e.model.get('activity'));
+    },
+
+    /**
+     * Fires new-activities-loaded event when that new activities are added via auto update.
+     *
+     * @event new activities are added via auto update
+     * @param activities the number of newly loaded activities
+     */
+    _fireNewActivitiesEvent: function(activities) {
+      this.fire('new-activities-loaded', activities.length);
     }
 
   });
