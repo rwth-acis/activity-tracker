@@ -1,0 +1,30 @@
+{
+  "name": "activity-tracker",
+  "description": "An element showing a list of activities, who created it and when.",
+  "version": "2.0.0-0",
+  "license": "MIT",
+  "main": "activity-tracker.js",
+  "homepage": "https://github.com/rwth-acis/activity-tracker/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rwth-acis/activity-tracker.git"
+  },
+  "authors": [
+    "István Koren",
+    "Albi Sema",
+    "Kristjan Liiva"
+  ],
+  "dependencies": {
+    "@polymer/polymer": "^3.0.5",
+    "@polymer/iron-ajax": "^3.0.1",
+    "@polymer/iron-list": "^3.0.1",
+    "@polymer/iron-scroll-threshold": "^3.0.1",
+    "@polymer/iron-flex-layout": "^3.0.1",
+    "@polymer/paper-spinner": "^3.0.1",
+    "time-elements": "^1.2.0"
+  },
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "wct-browser-legacy": "^1.0.0"
+  }
+}

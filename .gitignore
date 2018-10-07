@@ -1,4 +1,6 @@
-bower_components
+bower_components*
+bower-*.json
 
+node_modules
 
 .idea/
