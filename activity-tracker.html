@@ -106,7 +106,7 @@ Example:
       url="[[url]]"
       handle-as="json"
       loading="{{_loadingActivities}}"
-      params="{{_params}}"
+      params="{{_computedParams}}"
       on-response="_handleActivitiesResponse"></iron-ajax>
 
     <div id="scrollContainer">
@@ -184,6 +184,7 @@ Example:
         type: Number,
         value: 30
       },
+
       /**
        * Set to true when activities are being loaded.
        */
@@ -196,9 +197,43 @@ Example:
       autoUpdateInterval: {
         type: Number,
         value: 30
+      },
+      requestParameters: {
+        type: Object,
+        notify: true,
+        value: {}
+      },
+      _reset: {
+        type: Boolean,
+        value: false
+      },
+      _computedParams: {
+        type: Object,
+        computed: '_computeParams(_params, requestParameters)'
       }
+
+
+    },
+    observers: [
+            '_requestParametersChanged(requestParameters.*)'
+    ],
+
+    /**
+     * Computed property "_computedParams": Combines internal _params and external requestParameters, requestParameters overwrite params
+     */
+    _computeParams: function(params, requestParameters){
+      //return { ..._params, ...requestParameters};      //ECMAS2018 Object Spread, Object Deep Merge - doesnt work with polymer 1.0
+      return Object.assign({},params, requestParameters);
     },
 
+    /**
+     * Callback for requestParameters changes, triggers clearing of activities & loading with changed parameters
+     */
+    _requestParametersChanged: function(requestParams){
+      this._reset = true;
+      this._params = {'limit': this.initialLimit};
+      this.$.activitiesRequest.generateRequest();
+    },
     /**
      * Called after the properties are set. Starts the auto update if set.
      */
@@ -293,8 +328,15 @@ Example:
      *
      * @param e
      */
+
     _handleActivitiesResponse: function(e) {
       var activitiesResponse = e.detail.response;
+
+      //If requestParameters changed, reset activities
+      if(this._reset){
+        this._reset = false;
+        this._setActivities([]);
+      }
 
       // check if we are updating (then, there is a parameter called 'after')
       if (e.target.params.after) {
