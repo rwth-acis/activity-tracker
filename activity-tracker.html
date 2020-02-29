@@ -113,7 +113,7 @@ Example:
 
       <iron-list id="activitiesList" items="[[activities]]" as="activity">
         <template>
-          <a href$="[[activity.dataFrontendUrl]]" on-tap="_handleActivityTap">
+          <a href$="[[_appendUrlParameter(activity.dataFrontendUrl, appendUrlParameter)]]" on-tap="_handleActivityTap">
             <div class="activity">
               <img src="[[activity.user.profileImage]]">
               <div>
@@ -159,6 +159,15 @@ Example:
       url: {
         type: String,
         value: 'https://requirements-bazaar.org/beta/activities'
+      },
+      /**
+       * String/Parameter to get appended to activity.dataFrontendUrl of each item.
+       * If activity.dataFrontendUrl contains ?, appendUrlParameter is appended using &, otherwise ?
+       * Used e.g. to track clicks originating from the AT by appending a referer
+       */
+      appendUrlParameter: {
+        type: String,
+        value: ''
       },
       /**
        * An array of activity objects.
@@ -224,6 +233,18 @@ Example:
     _computeParams: function(params, requestParameters){
       //return { ..._params, ...requestParameters};      //ECMAS2018 Object Spread, Object Deep Merge - doesnt work with polymer 1.0
       return Object.assign({},params, requestParameters);
+    },
+    /**
+     * Appends a (parameter) string to url using & if url contains ?, using ? otherwise
+     *
+     * @param url to append to
+     * @param parameterString to append
+     * @returns {string}
+     */
+    _appendUrlParameter: function(url, parameterString){
+      if(parameterString == '') return url;
+      if(url.indexOf('?') > -1) return url+'&'+parameterString;
+      return url+'?'+parameterString;
     },
 
     /**
